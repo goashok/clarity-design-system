@@ -1,0 +1,12 @@
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { iconPaths } from '../src/icon-paths.js';
+const root = new URL('../', import.meta.url);
+const tokens = JSON.parse(await readFile(new URL('src/tokens.json', root), 'utf8'));
+const declarations = Object.entries(tokens).flatMap(([group, values]) => Object.entries(values).map(([key, value]) => `  --cl-${group}-${key}: ${value};`)).join('\n');
+const css = `/* Generated from src/tokens.json by npm run build. */\n:root, .clarity {\n${declarations}\n}\n`;
+await mkdir(new URL('dist/', root), { recursive: true });
+await writeFile(new URL('src/tokens.css', root), css);
+const components = await readFile(new URL('src/components.css', root), 'utf8');
+await writeFile(new URL('dist/clarity.css', root), `${css}\n${components}`);
+await writeFile(new URL('dist/icons.svg', root), `<svg xmlns="http://www.w3.org/2000/svg"><defs>${Object.entries(iconPaths).map(([name, paths]) => `<symbol id="cl-${name}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">${paths}</symbol>`).join('')}</defs></svg>\n`);
+console.log(`Built Clarity: ${Object.values(tokens).reduce((n, group) => n + Object.keys(group).length, 0)} tokens, ${Object.keys(iconPaths).length} icons.`);

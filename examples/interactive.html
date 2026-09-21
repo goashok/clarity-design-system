@@ -1,0 +1,9 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Clarity — Interactive components</title><link rel="stylesheet" href="../dist/clarity.css"><style>body{margin:0;padding:24px}main{max-width:800px;margin:auto}pre{white-space:pre-wrap;overflow-wrap:anywhere}</style></head><body class="clarity"><main class="cl-stack"><p class="cl-eyebrow">CLARITY 0.2</p><h1>Reusable controls. Explicit behavior.</h1><p class="cl-muted">This standalone example uses local modules and fonts. It sends no requests to an AI service.</p><section class="cl-card cl-card__body cl-stack"><h2>Choose a team</h2><cl-combobox label="Project team"></cl-combobox></section><cl-ai-suggestion></cl-ai-suggestion><cl-ai-action-review></cl-ai-action-review><section class="cl-card cl-card__body"><h2>Application event</h2><pre id="event" role="status">Interact with a component to inspect its emitted event.</pre></section></main><script type="module">
+import { registerClarityElements } from '../src/components.js';
+registerClarityElements();
+document.querySelector('cl-combobox').data={options:['Research','Engineering','Operations']};
+document.querySelector('cl-ai-suggestion').data={title:'Suggested review',text:'Verify the source date before sharing this draft.',context:'The draft refers to an undated sample document.'};
+document.querySelector('cl-ai-action-review').data={title:'Review proposed changes',actions:[{id:'save',label:'Save as a draft',detail:'Updates the draft in the selected workspace.'}],consequence:'This example displays the event only. It does not save or publish anything.'};
+for(const name of ['cl-change','cl-suggestion','cl-decision'])document.addEventListener(name,event=>{document.querySelector('#event').textContent=JSON.stringify({type:event.type,...event.detail},null,2);});
+</script></body></html>

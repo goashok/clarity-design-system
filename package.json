@@ -1,0 +1,46 @@
+{
+  "name": "@clarity-design/system",
+  "version": "0.2.0",
+  "description": "Clarity Design System \u2014 reusable foundations and components extracted from SigPro",
+  "type": "module",
+  "license": "UNLICENSED",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "files": [
+    "dist",
+    "src",
+    "docs",
+    "scripts",
+    "examples",
+    "tests",
+    "index.html",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "import": "./src/index.js"
+    },
+    "./styles.css": "./dist/clarity.css",
+    "./tokens.css": "./src/tokens.css",
+    "./fonts.css": "./src/fonts.css",
+    "./tokens.json": "./src/tokens.json",
+    "./icons.svg": "./dist/icons.svg",
+    "./icons/*": "./src/icons/*",
+    "./components": {
+      "types": "./src/components.d.ts",
+      "import": "./src/components.js"
+    }
+  },
+  "scripts": {
+    "build": "node scripts/build.js",
+    "dev": "node scripts/serve.js",
+    "start": "node scripts/serve.js",
+    "test": "node --test",
+    "prepack": "npm run build"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
