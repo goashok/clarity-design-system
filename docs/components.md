@@ -1,6 +1,6 @@
 # Clarity core components — v0.2
 
-Clarity now provides optional, explicitly registered **light-DOM web components**, in addition to its CSS and native HTML patterns. They use the existing light theme, fonts, borders, radii, and icon assets. The new controls are Clarity extensions; they are not claimed to have existed in SigPro.
+Clarity now provides optional, explicitly registered **light-DOM web components**, in addition to its CSS and native HTML patterns. They use the existing light theme, fonts, borders, radii, and icon assets.
 
 ## Start
 

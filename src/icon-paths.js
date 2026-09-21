@@ -1,4 +1,4 @@
-/* Exact SVG path data extracted from SigPro/public/app.js. */
+/* Clarity icon path data: 24px viewBox, drawn for a 1.65 stroke with round caps and joins. */
 export const iconPaths = Object.freeze({
   "grid": "<rect x=\"3\" y=\"3\" width=\"7\" height=\"7\" rx=\"1.5\"/><rect x=\"14\" y=\"3\" width=\"7\" height=\"7\" rx=\"1.5\"/><rect x=\"3\" y=\"14\" width=\"7\" height=\"7\" rx=\"1.5\"/><rect x=\"14\" y=\"14\" width=\"7\" height=\"7\" rx=\"1.5\"/>",
   "inbox": "<path d=\"M4 4h16l2 11v5H2v-5L4 4Z\"/><path d=\"M2 15h6l2 3h4l2-3h6\"/>",

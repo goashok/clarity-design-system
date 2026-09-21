@@ -1,9 +1,0 @@
-{
-  "source": "/home/nexus/Projects/SigPro",
-  "extracted": "2026-09-20",
-  "files": {
-    "package.json": "580181205d4202aee434f9aa9357759682e2c62fe43b980904d09604dba98d97",
-    "public/styles.css": "36ac67c4e744135c27d52b45fc46c5b548be22cf6b4e2c36a2a15d4a5278cc45",
-    "public/app.js": "aaf936bc4437b1de7b531d618e45bada0a40a68226a6f2d531cb569f0942a254"
-  }
-}

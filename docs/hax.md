@@ -1,6 +1,6 @@
 # Human–AI interaction patterns
 
-Clarity v0.2 adds all thirteen AI patterns proposed during the design-system review. They follow the existing SigPro-derived light theme and use ordinary controls with explicit state and behavior.
+Clarity v0.2 adds all thirteen AI patterns proposed during the design-system review. They follow Clarity's light theme and use ordinary controls with explicit state and behavior.
 
 Microsoft's HAX Toolkit provides research-backed interaction guidelines and UI-independent design patterns. It is not a prescribed widget library or a certification. These components are **Clarity's interpretation**. Product teams must still evaluate appropriateness, model behavior, data quality, permissions, accessibility, social norms, and bias for their use case.
 
@@ -82,6 +82,6 @@ Editable components maintain session-local state. Configure them before mounting
 
 ## Accessibility and review
 
-Components use native buttons, form labels, fieldsets, focusable disclosures, status messages, and text labels alongside color. The default SigPro palette has known small-text contrast limitations; AI body/help text uses stronger neutral colors, but downstream combinations still need review. Test keyboard order, zoom, screen reader announcements, error recovery, and touch target sizes in the actual product.
+Components use native buttons, form labels, fieldsets, focusable disclosures, status messages, and text labels alongside color. The default palette has known small-text contrast limitations; AI body/help text uses stronger neutral colors, but downstream combinations still need review. Test keyboard order, zoom, screen reader announcements, error recovery, and touch target sizes in the actual product.
 
 Pattern coverage is not a claim of HAX or WCAG compliance. The reference examples demonstrate component behavior using invented project data, with all external execution clearly labeled as simulation.

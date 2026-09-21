@@ -1,9 +1,9 @@
 {
   "name": "@clarity-design/system",
   "version": "0.2.0",
-  "description": "Clarity Design System \u2014 reusable foundations and components extracted from SigPro",
+  "description": "Clarity Design System \u2014 framework-independent tokens, CSS components, icons, and web components",
   "type": "module",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "sideEffects": [
     "**/*.css"
   ],
