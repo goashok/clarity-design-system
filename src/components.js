@@ -1,7 +1,8 @@
 import { icon } from './index.js';
-import { escapeHTML as e, safeURL, tablePage, generationStates, validateDateRange } from './component-utils.js';
+import { escapeHTML as e, formatMessage, safeURL, tablePage, generationStates, validateDateRange } from './component-utils.js';
 import { registerAI } from './hax.js';
-export { generationStates } from './component-utils.js';
+import { registerChat } from './chat.js';
+export { generationStates, formatMessage } from './component-utils.js';
 let sequence = 0;
 /** Explicit registration: importing this module is safe in SSR. Call in the browser. */
 export function registerClarityElements() {
@@ -95,4 +96,5 @@ export function registerClarityElements() {
     click(event){if(event.target.closest('[data-action="back"]')&&this.step>0){const input=this.querySelector('input');if(input)this.values[input.name]=input.value;this.step--;this.render();this.querySelector('input,button[type="submit"]').focus();}}
   });
   registerAI({Base,define,e,icon,safeURL,generationStates});
+  registerChat({Base,define,e,icon,safeURL,generationStates,formatMessage});
 }

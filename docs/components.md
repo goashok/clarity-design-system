@@ -57,6 +57,82 @@ The Core controls reference page includes copyable markup for:
 
 Loading animation is decorative. Put the meaningful status in text or a live region. Mark a loading region `aria-busy`, disable repeated submissions, and preserve form inputs when a request fails. Progress must reflect actual measured progress; the reference page's 65% is explicitly a sample.
 
+## Chat interface
+
+Two elements and two layout classes build an assistant workspace. They render what your application gives them and emit events. They never call a model, run an action, upload files, or store history.
+
+```html
+<div class="cl-chat-app" style="height: 720px">
+  <aside class="cl-chat-app__history" aria-label="Conversations">…</aside>
+  <div class="cl-chat">
+    <div class="cl-chat__header"><div><h2 class="cl-chat__title">Publication plan</h2><p class="cl-chat__subtitle">2 documents in context</p></div></div>
+    <cl-chat-thread></cl-chat-thread>
+    <div class="cl-chat__footer"><cl-chat-input></cl-chat-input></div>
+  </div>
+  <aside class="cl-chat-app__panel" aria-label="Context and sources">…</aside>
+</div>
+```
+
+- **`.cl-chat`** is the conversation column: header, scrolling thread, and composer on the canvas background. It fills its container, so give the container a height. Use it alone for a single-pane chat.
+- **`.cl-chat-app`** adds a history column (`.cl-chat-app__history`, with `.cl-chat-history` and `.cl-chat-history__item[aria-current="true"]`) and a context panel (`.cl-chat-app__panel`, with `.cl-chat-docs` and `.cl-chat-panel-sources`). It responds to its own width through a container query. Below 1000px the panel becomes an overlay shown with `data-panel="open"`. Below 680px the history column hides. `data-panel="closed"` hides the panel at any width. Your application renders the history and panel content and handles toggling.
+
+```js
+const thread = document.querySelector('cl-chat-thread');
+const input = document.querySelector('cl-chat-input');
+let messages = [];
+
+input.addEventListener('cl-request', async ({ detail }) => {
+  const id = crypto.randomUUID();
+  messages = [...messages, { id: `u-${id}`, role: 'user', content: detail.prompt }, { id, role: 'assistant', state: 'waiting' }];
+  thread.data = { messages };
+  input.data = { generating: true };
+  for await (const text of streamFromYourService(detail.prompt, detail.context)) { // your code
+    messages = messages.map(m => (m.id === id ? { ...m, state: 'generating', content: text } : m));
+    thread.data = { messages };
+  }
+  messages = messages.map(m => (m.id === id ? { ...m, state: 'complete' } : m));
+  thread.data = { messages };
+  input.data = { generating: false };
+});
+input.addEventListener('cl-stop', () => controller.abort());
+```
+
+### `cl-chat-thread`
+
+`.data`: `{ label?, assistantName?, messages, empty? }`. Each message is `{ id, role, content?, state?, name?, time?, error?, rating?, files?, sources?, steps?, clarify?, action?, editable?, regenerable?, rateable? }`.
+
+- **`id`** must be unique and stable. Messages are reconciled by `id`, so a streaming update rewrites only the message that changed. Focus, selection, open step trails, and scroll position elsewhere are preserved.
+- **`role`** is `user`, `assistant`, or `system`. User messages are cobalt bubbles. Assistant messages carry the gradient mark, the assistant name in Manrope, and a white answer card. The mark pulses while the response is in progress.
+- **`state`** uses the generation states: `waiting` (“Thinking…”, typing dots), `generating` (“Working…” while a step runs, then “Writing…” with a pulsing cursor), `complete` (or omitted), `interrupted`, `incomplete`, and `failed` (shows `error` with Retry). Set `content` to the full text so far on each update.
+- **`steps`** `[{label, state, detail?}]` render a collapsible trail at the top of the card. While a step is `running`, the summary shows it with a spinner. Afterwards it reads “Worked through 3 steps”. Show factual activity (documents read, tools called), not speculative reasoning.
+- **`sources`** `[{title, url?}]` render as numbered pills. Markers `[1]`…`[n]` in the text become citation buttons, where `n` is the number of sources. Hovering or focusing a citation highlights its source, and clicking it moves focus there. Only `http:` and `https:` URLs become links. Citations are not linked while text is streaming.
+- **`clarify`** `{question, options, answer?}` renders choice chips. Choosing one emits `cl-message-action {action:'clarify', id, answer}` and locks the chips. Set `answer` in your data to keep the choice.
+- **`action`** `{id, title, detail?, consequence?, state, statusText?, approveLabel?, declineLabel?}` renders an approval card. Approve or decline emits `cl-message-action {action:'approve'|'decline', id, actionId}` and disables both buttons. Nothing runs by itself: set `state` to `running`, then `done`, `declined`, or `failed` as your service reports. Validate authorization on the server.
+- **`time`** is display text. **`empty`** `{title?, description?, prompts?}` shows when there are no messages. Choosing a prompt emits `cl-invoke {prompt}`.
+
+Content is escaped, then formatted for paragraphs, line breaks, bullet and numbered lists, `**bold**`, `` `inline code` ``, `#` heading lines (rendered as bold lines), citations, and fenced code blocks with a language label and a copy button. Links, images, tables, and raw HTML are not rendered. `formatMessage(text, { citations })` is exported. To render Markdown, set `thread.renderContent = (text, message) => html` before assigning data. The result is inserted as trusted HTML, so it must come from a sanitizing renderer.
+
+**Actions.** Icon buttons (copy, edit for `editable` user messages, regenerate, good/poor response) and `time` sit under each message. They appear on hover or keyboard focus, and are always visible for the latest assistant message and on touch devices.
+
+**Scrolling.** The thread follows new output while the reader is at the bottom. If they scroll up, it stops and shows Jump to latest. Sending a message always scrolls to the bottom. `thread.scrollToEnd()` does the same on demand.
+
+**Screen readers.** The conversation is a `role="log"` region with live announcements off, so streamed tokens are not read aloud. A status region announces that a response started, reads the finished response, and reports failures and stops.
+
+**Events.** `cl-message-action {action, id, rating?, actionId?, answer?}` with `action` of `copy`, `regenerate`, `retry`, `edit`, `rate`, `approve`, `decline`, or `clarify`. Copy writes to the clipboard and still emits. Rating toggles locally; persist it yourself.
+
+### `cl-chat-input`
+
+`.data`: `{ label?, placeholder?, maxLength?, context?, suggestions?, generating?, disabled?, disabledReason?, attachments?, accept?, maxFileSize? }`.
+
+- Enter sends. Shift+Enter inserts a new line. Enter during IME composition never sends. Send is a round icon button, disabled while the draft is empty.
+- **`context`** `[{id, label}]` shows as chips in the composer. Removing one emits `cl-context-change {items}`. `cl-request` includes the remaining IDs as `context`.
+- **`suggestions`** show as chips above the composer. Choosing one fills the draft for editing. It does not send.
+- While `generating` is true, Send becomes Stop and emits `cl-stop`. Typing stays enabled, but sending is blocked.
+- `input.value` reads or replaces the draft. Use it to restore text after a failed request or to edit a previous message.
+- `cl-request {prompt, context, files}` fires on send. The draft and attachments clear afterwards. Attachments are local `File` objects, and `maxFileSize` is a convenience check only.
+
+`cl-ai-composer` is a full form panel for review workflows. Use `cl-chat-input` for conversation.
+
 ## Example: dataset and events
 
 ```js

@@ -39,3 +39,4 @@ body { margin:0; }
 .cl-pattern-index a:hover{text-decoration:underline}
 [id^="pattern-"]{scroll-margin-top:24px}
 .cl-sidebar .cl-nav-item{padding-top:10px;padding-bottom:10px}
+.clarity .chat-demo{height:720px;border:1px solid var(--cl-color-border);border-radius:14px;overflow:hidden;box-shadow:var(--cl-shadow-card)}

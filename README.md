@@ -9,7 +9,7 @@ npm run dev
 # http://localhost:4173
 ```
 
-The reference site includes eleven sections: overview, colors, typography, spacing and shape, components, core controls, AI interactions, patterns, icons, tokens, and integration. No dependencies or installation are needed to run this repository. Node 20+ is required for the local server and build scripts. Set `PORT` to change the preview port.
+The reference site includes twelve sections: overview, colors, typography, spacing and shape, components, core controls, AI interactions, chat interface, patterns, icons, tokens, and integration. No dependencies or installation are needed to run this repository. Node 20+ is required for the local server and build scripts. Set `PORT` to change the preview port.
 
 ## Use in another project
 
@@ -48,7 +48,7 @@ For a portable package, run `npm pack`; install the resulting `.tgz` in the dest
 - **102 tokens** in editable JSON and generated CSS: semantic colors, typography, spacing, radii, shadows, layout, motion, and layer order.
 - **26 original icons**, preserving SigPro's paths, 24px viewBox, 1.65 stroke, round caps, and round joins. Available as individual SVGs, a sprite, and a typed ES module helper.
 - **Scoped CSS components**: buttons, icon buttons, cards, metrics, badges, avatars, icon tiles, form fields, search, checkboxes, tabs, alerts, selectable list items, empty states, tables, native dialogs, toasts, sidebar, navigation, breadcrumbs, workflow nodes, and timelines.
-- **23 optional web components**: ten core interactive controls and thirteen HAX-inspired AI patterns. Searchable selection, menus, drawers, tables, file selection, stepper forms, suggestions, evidence, correction, feedback, context, preferences, generation, and action review.
+- **25 optional web components**: ten core interactive controls, thirteen HAX-inspired AI patterns, and a chat thread, input, and workspace layout with step trails, citations, clarification, and inline approvals. Searchable selection, menus, drawers, tables, file selection, stepper forms, suggestions, evidence, correction, feedback, context, preferences, generation, and action review.
 - **Native patterns** for switches, radios, dates, accordions, skeletons, loading states, and progress.
 - **Reference site** with live samples, copyable markup, icon and token search, optional enhanced text contrast, and integration instructions.
 - **Design documentation** describing source measurements, extraction choices, states, accessibility, and responsive behavior.
@@ -110,7 +110,7 @@ registerClarityElements();
 </div>
 ```
 
-Configure elements through `.data`, and connect their `cl-*` events to your application. The library does not call models, upload files, execute actions, or persist preferences. See [core component APIs](docs/components.md) and [AI interaction contracts](docs/hax.md). Modern browsers with Custom Elements, native dialog, and Popover API support are required.
+Configure elements through `.data`, and connect their `cl-*` events to your application. The library does not call models, upload files, execute actions, or persist preferences. See [core component APIs](docs/components.md) (including the [chat interface](docs/components.md#chat-interface)) and [AI interaction contracts](docs/hax.md). Modern browsers with Custom Elements, native dialog, and Popover API support are required.
 
 For the existing CSS-only primitives: Native controls provide input, select, checkbox, validation, and disabled behavior. Use `dialog.showModal()` for dialogs, supply `aria-labelledby`, and retain a visible close action. Keep dialogs and portal mounts inside a `.clarity` ancestor. Tabs need selected state, roving tabindex, arrow/Home/End handling, and linked tab panels. The site demonstrates these in `docs/site.js`; copy/adapt the handlers or use your framework's accessible primitives.
 

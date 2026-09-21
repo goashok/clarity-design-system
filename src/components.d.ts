@@ -9,6 +9,35 @@ export interface EvidenceData { title?: string; summary?: string; inputs?: strin
 export interface DecisionDetail { decision: 'approve' | 'reject'; ids: string[]; }
 export interface RequestDetail { prompt: string; context: string[]; files: File[]; }
 export interface FeedbackDetail { claimId: string | null; reasons: string[]; detail: string; }
+export interface ChatMessage {
+  id: string | number;
+  role: 'user' | 'assistant' | 'system';
+  content?: string;
+  /** Assistant lifecycle. Omitted or 'idle' means complete. */
+  state?: GenerationState;
+  name?: string;
+  time?: string;
+  error?: string;
+  rating?: 'up' | 'down' | null;
+  files?: Array<{ name: string }>;
+  sources?: Array<{ title: string; url?: string }>;
+  /** Reasoning or tool steps, shown as a collapsible trail above the answer. */
+  steps?: Array<{ label: string; state?: 'pending' | 'running' | 'complete' | 'failed'; detail?: string }>;
+  /** A proposed action awaiting approval. The application sets `state` as it runs the action. */
+  action?: { id: string; title: string; detail?: string; consequence?: string; state?: 'pending' | 'running' | 'done' | 'declined' | 'failed'; statusText?: string; approveLabel?: string; declineLabel?: string };
+  /** A clarifying question with choices. Set `answer` once chosen. */
+  clarify?: { question: string; options: string[]; answer?: string | null };
+  editable?: boolean;
+  regenerable?: boolean;
+  rateable?: boolean;
+}
+export interface ChatThreadData { label?: string; assistantName?: string; messages: ChatMessage[]; empty?: { title?: string; description?: string; prompts?: string[] }; }
+export interface ChatInputData { label?: string; placeholder?: string; context?: Array<{ id: string; label: string }>; suggestions?: string[]; maxLength?: number; generating?: boolean; disabled?: boolean; disabledReason?: string; attachments?: boolean; accept?: string; maxFileSize?: number; }
+export interface MessageActionDetail { action: 'copy' | 'regenerate' | 'retry' | 'edit' | 'rate' | 'approve' | 'decline' | 'clarify'; id: string; rating?: 'up' | 'down' | null; actionId?: string | null; answer?: string; }
+export interface ChatThreadElement extends ClarityElement<ChatThreadData> { renderContent?: ((text: string, message: ChatMessage) => string) | null; scrollToEnd(): void; }
+export interface ChatInputElement extends ClarityElement<ChatInputData> { value: string; }
+/** Escapes untrusted chat text and formats paragraphs, inline code, and fenced code blocks. */
+export function formatMessage(text: unknown, options?: { citations?: number }): string;
 declare global {
  interface HTMLElementTagNameMap {
   'cl-menu': ClarityElement<{items: Array<{id:string;label:string;disabled?:boolean}>}>;
@@ -34,5 +63,7 @@ declare global {
   'cl-ai-generation': ClarityElement<GenerationData>;
   'cl-ai-action-review': ClarityElement<{title?:string;description?:string;consequence?:string;actions:Array<{id:string;label:string;detail:string}>}>;
   'cl-ai-execution': ClarityElement<ExecutionData>;
+  'cl-chat-thread': ChatThreadElement;
+  'cl-chat-input': ChatInputElement;
  }
 }
